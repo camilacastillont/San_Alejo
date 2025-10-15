@@ -1,0 +1,63 @@
+{% extends 'components/base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'assets/libs/jsvectormap/jsvectormap.min.css'%}">
+<link rel="stylesheet" href="{% static 'assets/libs/swiper/swiper-bundle.min.css'%}">
+
+{% endblock %}
+
+{% block content %}
+<div class="d-sm-flex d-block align-items-center justify-content-between page-header-breadcrumb">
+      <h4 class="fw-medium mb-0">Detalles tarjetas</h4>
+    <div class="page-breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">
+                <a href="{% url 'app:index' %}" class="text-white text-decoration-none">Inicio</a>
+            </li>
+            <li class="breadcrumb-item text-white">OLT</li>
+            <li class="breadcrumb-item">
+            <a href="{% url 'olt:san_alejo' %}" class="text-white text-decoration-none">San alejo</a>
+            </li>
+            <li class="breadcrumb-item">
+            <a href="{% url 'olt:detalle_tarjeta' tarjeta.id %}" class="text-white text-decoration-none">Detalles</a>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<br>
+<br>
+<br>
+<br>
+<div class="container mt-4">
+  <br>
+    <!-- Botón regresar -->
+    <div class="mt-5 mb-3">
+        <a href="{% url 'olt:san_alejo' %}" class="bi bi-arrow-left-short btn btn-outline-secondary"> Regresar al listado</a>
+    </div>
+
+    <!-- Información de la tarjeta -->
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Información de la Tarjeta</h5>
+                    <p><strong>Slot:</strong> {{ tarjeta.slot }}</p>
+                    <p><strong>Nombre:</strong> {{ tarjeta.nombre }}</p>
+                    <p><strong>Estado:</strong> 
+                        <span class="badge {% if tarjeta.estado == 'Normal' %}bg-success{% else %}bg-danger{% endif %}">
+                            {{ tarjeta.estado }}
+                        </span>
+                    </p>
+                    <p><strong>Power:</strong> 
+                        <span class="badge {% if tarjeta.power == 'POWER-ON' %}bg-primary{% else %}bg-secondary{% endif %}">
+                            {{ tarjeta.power }}
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

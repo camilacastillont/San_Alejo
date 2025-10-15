@@ -1,0 +1,239 @@
+{% extends 'components/base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'assets/libs/jsvectormap/jsvectormap.min.css'%}">
+<link rel="stylesheet" href="{% static 'assets/libs/swiper/swiper-bundle.min.css'%}">
+{% endblock %}
+
+{% block content %}
+<div class="d-sm-flex d-block align-items-center justify-content-between page-header-breadcrumb">
+      <h4 class="fw-medium mb-0">San Alejo</h4>
+    <div class="page-breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">
+                <a href="{% url 'app:index' %}" class="text-white text-decoration-none">Inicio</a>
+            </li>
+            <li class="breadcrumb-item text-white">OLT</li>
+            <li class="breadcrumb-item">
+            <a href="{% url 'olt:san_alejo' %}" class="text-white text-decoration-none">San alejo</a>
+            </li>
+        </ol>
+    </div>
+</div>
+
+
+
+<!--Contenedor principal -->
+<div class="container mt-4">
+<br>
+<br>
+<br>
+<br>
+<!-- Botón regresar -->
+    <div class="mb-3">
+        <a href="javascript:history.back()" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Regresar
+        </a>
+    </div>
+    <!-- Barra de búsqueda -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form class="d-flex" method="get" action="">
+                <input name="q" class="form-control me-2" type="search"
+                      placeholder="Buscar tarjeta..." value="{{ query }}">
+                <button class="btn btn-primary" type="submit">Buscar</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Botón agregar tarjeta -->
+    <div class="text-end mb-3">
+        <button class="bi bi-file-earmark-plus btn btn-success" data-bs-toggle="modal" data-bs-target="#addCardModal">
+             Agregar tarjeta
+        </button>
+    </div>
+
+    <!-- Tabla de tarjetas -->
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Slot</th>
+                        <th>Nombre</th>
+                        <th>Estado</th>
+                        <th>Power</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tarjetasBody">
+                    {% for tarjeta in tarjetas %}
+                    <tr>
+                        <td>{{ tarjeta.slot }}</td>
+                        <td>{{ tarjeta.nombre }}</td>
+                        <td>
+                            {% if tarjeta.estado == "Normal" %}
+                                <span class="badge bg-success">{{ tarjeta.estado }}</span>
+                            {% else %}
+                                <span class="badge bg-danger">{{ tarjeta.estado }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if tarjeta.power == "POWER-ON" %}
+                                <span class="badge bg-primary">{{ tarjeta.power }}</span>
+                            {% else %}
+                                <span class="badge bg-secondary">{{ tarjeta.power }}</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                           <a href="{% url 'olt:detalle_tarjeta' tarjeta.id %}" class="bi bi-arrow-right-short btn btn-sm btn-outline-primary">
+                                Ver Detalle
+                          </a>
+                          <button class="bi bi-trash-fill btn btn-sm bg-danger eliminarTarjetaBtn" data-id="{{ tarjeta.id }}">
+                        </button>
+                          </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">No hay tarjetas registradas.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<!-- Modal Agregar Tarjeta -->
+<div class="modal fade" id="addCardModal" tabindex="-1" aria-labelledby="addCardModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addCardModalLabel">Agregar Tarjeta</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <form id="addCardForm">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label">Slot</label>
+            <input type="text" class="form-control" name="slot" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input type="text" class="form-control" name="nombre" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Estado</label>
+            <select class="form-select" name="estado">
+              <option value="Normal">Normal</option>
+              <option value="Falla">Falla</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Power</label>
+            <select class="form-select" name="power">
+              <option value="POWER-ON">POWER-ON</option>
+              <option value="POWER-OFF">POWER-OFF</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-success">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+    // ==========================
+    // AGREGAR TARJETA
+    // ==========================
+    document.getElementById("addCardForm").addEventListener("submit", function(e){
+        e.preventDefault();
+        let formData = new FormData(this);
+
+        fetch("{% url 'olt:agregar_tarjeta' %}", {
+            method: "POST",
+            headers: {"X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value},
+            body: formData
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(!data.error){
+                let tbody = document.getElementById("tarjetasBody");
+                let newRow = document.createElement("tr");
+                newRow.innerHTML = `
+                    <td>${data.slot}</td>
+                    <td>${data.nombre}</td>
+                    <td>${data.estado == "Normal" ? '<span class="badge bg-success">Normal</span>' : '<span class="badge bg-danger">Falla</span>'}</td>
+                    <td>${data.power == "POWER-ON" ? '<span class="badge bg-primary">POWER-ON</span>' : '<span class="badge bg-secondary">POWER-OFF</span>'}</td>
+                    <td>
+                        <a href="/olt/${data.id}/" class="btn btn-sm btn-outline-primary">➜ Ver Detalle</a>
+                        <button class="bi bi-trash-fill btn btn-sm bg-danger eliminarTarjetaBtn" data-id="${data.id}"></button>
+                    </td>
+                `;
+                tbody.appendChild(newRow);
+
+                // Asignar evento al nuevo botón de eliminar
+                attachDeleteEvent(newRow.querySelector(".eliminarTarjetaBtn"));
+
+                let modalEl = document.getElementById("addCardModal");
+                let modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+                modal.hide();
+                document.getElementById("addCardForm").reset();
+            } else {
+                alert("Error al agregar tarjeta");
+            }
+        })
+        .catch(err => console.error(err));
+    });
+
+    // ==========================
+    // ELIMINAR TARJETA
+    // ==========================
+    function attachDeleteEvent(button){
+        button.addEventListener("click", function(){
+            const tarjetaId = this.dataset.id;
+            if(confirm("¿Estás seguro que deseas eliminar esta tarjeta?")){
+                fetch(`/olt/eliminar_tarjeta/${tarjetaId}/`, {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": document.querySelector("[name=csrfmiddlewaretoken]").value,
+                        "Content-Type": "application/json"
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if(data.success){
+                        const fila = this.closest("tr");
+                        console.log(fila);
+                        fila.remove();
+                        alert("Tarjeta eliminada correctamente");
+                    } else {
+                        alert("Error al eliminar la tarjeta");
+                    }
+                })
+                .catch(err => console.error(err));
+            }
+        });
+    }
+
+    // Asignar evento a todos los botones existentes al cargar la página
+    document.querySelectorAll(".eliminarTarjetaBtn").forEach(btn => attachDeleteEvent(btn));
+
+});
+</script>
+
+{% endblock %}

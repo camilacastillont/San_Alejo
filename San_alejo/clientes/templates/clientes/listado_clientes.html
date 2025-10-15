@@ -1,0 +1,161 @@
+{% extends 'components/base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'assets/libs/jsvectormap/jsvectormap.min.css'%}">
+<link rel="stylesheet" href="{% static 'assets/libs/swiper/swiper-bundle.min.css'%}">
+{% endblock %}
+
+{% block content %}
+<!-- Encabezado de la página -->
+<div class="d-sm-flex d-block align-items-center justify-content-between page-header-breadcrumb">
+    <h4 class="fw-medium mb-0">Listado de Clientes</h4>
+    <div class="page-breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">
+                <a href="{% url 'app:index' %}" class="text-white text-decoration-none">Inicio</a>
+            </li>
+            <li class="breadcrumb-item text-white">Clientes</li>
+            <li class="breadcrumb-item active text-white" aria-current="page">Listado</li>
+        </ol>
+    </div>
+</div>
+
+<!-- Contenedor principal -->
+ <br>
+ <br>
+ <br>
+ <br>
+ <br>
+<div class="container mt-4">
+    <!-- Botón regresar -->
+    <div class="mb-3">
+        <a href="javascript:history.back()" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Regresar
+        </a>
+    </div>
+
+    <!-- Barra de búsqueda -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form class="d-flex" method="get" action="">
+                <input name="q" class="form-control me-2" type="search"
+                      placeholder="Buscar cliente por nombre o documento..." value="{{ query }}">
+                <button class="btn btn-primary" type="submit">
+                    <i class=""></i> Buscar
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Botón agregar cliente -->
+    <div class="text-end mb-3" data-bs-toggle="modal" data-bs-target="#agregarClienteModal">
+        <button class="btn btn-success">
+            <i class="bi bi-person-plus"></i> Agregar nuevo cliente
+        </button>
+    </div>
+    
+
+    <!-- Tabla de clientes -->
+    <div class="card">
+        <div class="card-body">
+            <table class="table table-bordered table-hover align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th>Estado</th>
+                        <th>Nombre</th>
+                        <th>DUI</th>
+                        <th>NIT</th>
+                        <th>Teléfono</th>
+                        <th>Celular</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="clientesBody">
+                    {% for cliente in clientes %}
+                    <tr>
+                        <td>
+                            {% if cliente.estado == "Activo" %}
+                                <span class="badge bg-success">{{ cliente.estado }}</span>
+                            {% else %}
+                                <span class="badge bg-danger">{{ cliente.estado }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ cliente.nombre }}</td>
+                        <td>{{ cliente.dui }}</td>
+                        <td>{{ cliente.nit }}</td>
+                        <td>{{ cliente.telefono }}</td>
+                        <td>{{ cliente.celular }}</td>
+                        <td>
+                            <button class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i> Ver más
+                            </button>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="7" class="text-center">No hay clientes registrados.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- Modal para agregar cliente -->
+    <div class="modal fade" id="agregarClienteModal" tabindex="-1" aria-labelledby="agregarClienteLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <form id="agregarClienteForm">
+            <div class="modal-header">
+            <h5 class="modal-title" id="agregarClienteLabel">Agregar Nuevo Cliente</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body">
+            <div class="mb-3">
+                <label for="nombre" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="nombre" name="nombre" required>
+            </div>
+            <div class="mb-3">
+                <label for="dui" class="form-label">DUI</label>
+                <input type="text" class="form-control" id="dui" name="dui" required>
+            </div>
+            <div class="mb-3">
+                <label for="nit" class="form-label">NIT</label>
+                <input type="text" class="form-control" id="nit" name="nit" required>
+            </div>
+            <div class="mb-3">
+                <label for="telefono" class="form-label">Teléfono</label>
+                <input type="text" class="form-control" id="telefono" name="telefono">
+            </div>
+            <div class="mb-3">
+                <label for="celular" class="form-label">Celular</label>
+                <input type="text" class="form-control" id="celular" name="celular">
+            </div>
+            <div class="mb-3">
+                <label for="estado" class="form-label">Estado</label>
+                <select class="form-select" id="estado" name="estado">
+                <option value="Activo">Activo</option>
+                <option value="Inactivo">Inactivo</option>
+                </select>
+            </div>
+            </div>
+            <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-success">Guardar</button>
+            </div>
+        </form>
+        </div>
+    </div>
+    </div>
+
+</div>
+
+ 
+
+{% endblock %}
+
+{% block scripts %}
+
+ <script src="{% static 'js/clientes.js' %}"></script>
+
+{% endblock %}

@@ -1,0 +1,109 @@
+﻿{% extends 'components/base.html' %}
+{% load static %}
+
+{% block styles %}
+
+<link rel="stylesheet" href="{% static 'assets/libs/jsvectormap/jsvectormap.min.css'%}">
+
+<link rel="stylesheet" href="{% static 'assets/libs/swiper/swiper-bundle.min.css'%}">
+
+{% endblock %}
+
+{% block content %}
+
+<!-- Page Header -->
+<div class="d-sm-flex d-block align-items-center justify-content-between page-header-breadcrumb">
+    <!--Espacio bienvenida-->
+    {% if menu == 0 %}
+    <h4 class="fw-medium mb-0">Bienvenido</h4>
+    <!--Espacio Paneles-->
+    {% elif menu >= 1 and menu <= 9 %} <h4 class="fw-medium mb-0">Paneles</h4>
+        <!--Espacio Empresa-->
+    {% elif menu >= 200 and menu <= 209 %}<h4 class="fw-medium mb-0">OLT</h4>
+     {% elif menu >= 10 and menu <= 19 %} <h4 class="fw-medium mb-0">Clientes</h4>
+
+                                {% endif %}
+                                <div class="ms-sm-1 ms-0">
+                                    <nav aria-label="breadcrumb">
+                                        <ol class="breadcrumb breadcrumb-style2 mb-2">
+                                            <li class="breadcrumb-item"><a href="{% url 'app:index' %}"><i
+                                                        class="ti ti-home-2 me-1 fs-15 d-inline-flex"></i>Inicio</a>
+                                            </li>
+                                            {% if menu >= 1 and menu <= 9 %} <!-- Comun para todos los Paneles -->
+                                                <li class="breadcrumb-item"><a href="javascript:void(0);"><i
+                                                            class="ti ti-home-2 me-1 fs-15 d-inline-flex"></i>Paneles</a>
+                                                </li>
+
+                                                {% if menu == 1 %}
+                                                <li class="breadcrumb-item active" aria-current="page">Ventas</li>
+                                                {% elif menu == 2 %}
+                                                <li class="breadcrumb-item active" aria-current="page">Cobros</li>
+                                                {% endif %}
+                                                {% endif %}
+
+                                                {% if menu >= 200 and menu <= 209 %} <li class="breadcrumb-item"><a
+                                                        href="javascript:void(0);"><i
+                                                            class="ti ti-home-2 me-1 fs-15 d-inline-flex"></i>Olt</a>
+                                                    </li>
+                                                    {% if menu == 200 %} <li class="breadcrumb-item active"
+                                                        aria-current="page">
+                                                        San Alejo
+                                                    </li>
+                                                {% endif %}
+                                                
+                                                {% if menu >= 10 and menu <= 19 %} <li class="breadcrumb-item"><a
+                                                        href="javascript:void(0);"><i
+                                                            class="ti ti-home-2 me-1 fs-15 d-inline-flex"></i>Clientes</a>
+                                                    </li>
+
+                                                    {% if menu == 10 %} <li class="breadcrumb-item active"
+                                                        aria-current="page">
+                                                        Listado de clientes
+                                                    </li>
+                                                    {% endif %}
+                                                {% endif %}
+                                                {% endif %}
+                                        </ol>
+                                    </nav>
+                                </div>
+</div>
+<!-- Start::app-content -->
+<div class="main-content app-content">
+    <div class="container-fluid">
+
+        <!-- Start::row-1 -->
+        {% if menu == 0 %} <!--Bienvenida-->
+        {% include 'welcome.html' %}
+
+        {% elif menu == 1 %} <!--Paneles-->
+        {% include 'pan-nav.html' %}
+
+        {% endif %}
+      
+        
+
+        <!--END Row::1-->
+    </div>
+</div>
+  
+{% endblock %}
+
+{% block scripts %}
+
+<!-- JSVector Maps JS -->
+<script src="{% static 'assets/libs/jsvectormap/jsvectormap.min.js'%}"></script>
+
+<!-- JSVector Maps MapsJS -->
+<script src="{% static 'assets/libs/jsvectormap/maps/world-merc.js'%}"></script>
+
+<!-- Chartjs Chart JS -->
+<script src="{% static 'assets/libs/chart.js/chart.umd.js'%}"></script>
+
+<!-- Apex Charts JS -->
+<script src="{% static 'assets/libs/apexcharts/apexcharts.min.js'%}"></script>
+
+<!-- CRM-Dashboard -->
+<script src="{% static 'assets/js/sales-dashboard.js'%}"></script>
+
+<script src="{% static 'index/js/index.js'%}"></script>
+{% endblock %}

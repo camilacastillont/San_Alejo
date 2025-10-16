@@ -26,44 +26,67 @@ def san_alejo(request):
     }
 
     return render(request, "san_alejo.html", context)
-def detalle_tarjeta(request, pk):
-    tarjeta = get_object_or_404(Tarjeta, pk=pk)
-    ports = tarjeta.puertos.all().order_by("numero")
+    
+def detalle_tarjeta(request, tarjeta_id):
+    tarjeta = get_object_or_404(Tarjeta, id=tarjeta_id)
+    puertos = tarjeta.puertos.all()
     onts = ONT.objects.filter(puerto__tarjeta=tarjeta)
+    
+    return render(request, 'detalle_tarjeta.html', {'tarjeta': tarjeta, 'puertos': puertos, 'onts': onts})
 
-    # --- Si el formulario se envía vía AJAX (fetch) ---
-    if request.method == "POST" and request.headers.get("x-requested-with") == "XMLHttpRequest":
-        port = request.POST.get("port")
-        tipo = request.POST.get("tipo")
-        min_distance = request.POST.get("min_distance")
-        max_distance = request.POST.get("max_distance")
-        status = request.POST.get("status")
+def agregar_puerto(request, tarjeta_id):
+    if request.method == 'POST':
+        tarjeta = get_object_or_404(Tarjeta, id=tarjeta_id)
+        numero = request.POST.get('numero', 0)
+        port = request.POST.get('port')
+        tipo = request.POST.get('tipo')
+        min_distance = request.POST.get('min_distance') or 0
+        max_distance = request.POST.get('max_distance') or 0
+        status = request.POST.get('status', 'Offline')
 
-        nuevo_puerto = Puerto.objects.create(
+        puerto = Puerto.objects.create(
             tarjeta=tarjeta,
-            numero=port,
+            numero=numero,
+            port=port,
             tipo=tipo,
             min_distance=min_distance,
             max_distance=max_distance,
-            status=status,
+            status=status
         )
-
-        # --- Devolver los datos del nuevo puerto en JSON ---
         return JsonResponse({
-            "id": nuevo_puerto.id,
-            "numero": nuevo_puerto.numero,
-            "tipo": nuevo_puerto.tipo,
-            "min_distance": nuevo_puerto.min_distance,
-            "max_distance": nuevo_puerto.max_distance,
-            "status": nuevo_puerto.status,
+            'id': puerto.id,
+            'numero': puerto.numero,
+            'port': puerto.port,
+            'tipo': puerto.tipo,
+            'min_distance': str(puerto.min_distance),
+            'max_distance': str(puerto.max_distance),
+            'status': puerto.status
+        })
+    return JsonResponse({'error': 'Método no permitido'}, status=400)
+
+def agregar_ont(request, puerto_id):
+    if request.method == "POST":
+        puerto = get_object_or_404(Puerto, id=puerto_id)
+        nombre = request.POST.get("nombre_ont")
+        sn = request.POST.get("sn")
+        control_flag = request.POST.get("control_flag", "active")
+
+        ont = ONT(puerto=puerto, nombre=nombre, sn=sn, control_flag=control_flag)
+        ont.save()
+
+        return JsonResponse({
+            "ont_id": ont.ont_id,
+            "service_port": ont.service_port,
+            "nombre": ont.nombre,
+            "sn": ont.sn,
+            "control_flag": ont.control_flag,
+            "run_state": ont.run_state,
+            "config_state": ont.config_state,
+            "match_state": ont.match_state,
+            "fsp": f"{puerto.port}"
         })
 
-    # --- Si es GET, simplemente mostrar la plantilla ---
-    return render(request, "detalle_tarjeta.html", {
-        "tarjeta": tarjeta,
-        "ports": ports,
-        "onts": onts,
-    })
+    return JsonResponse({"error": "Método no permitido"}, status=400)
 
 @csrf_protect
 def agregar_tarjeta(request):

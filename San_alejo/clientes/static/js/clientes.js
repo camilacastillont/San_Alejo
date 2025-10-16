@@ -5,7 +5,7 @@ document.addEventListener("DOMContentLoaded", function() {
 
         const formData = new FormData(form);
 
-        fetch("/clientes/agregar/", {   // Ajusta la URL si es diferente
+        fetch("/clientes/agregar/", {   
             method: "POST",
             headers: {
                 "X-CSRFToken": getCookie("csrftoken")

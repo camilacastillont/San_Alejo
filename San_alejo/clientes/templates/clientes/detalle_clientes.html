@@ -1,0 +1,180 @@
+{% extends 'components/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <br>
+    <br><br>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h4>Detalle del Cliente</h4>
+        <a href="{% url 'clientes:listado_clientes' %}" class="btn btn-outline-secondary">
+            <i class="bi bi-arrow-left"></i> Regresar
+        </a>
+    </div>
+
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <!-- Pestañas -->
+            <ul class="nav nav-tabs" id="clienteTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="info-tab" data-bs-toggle="tab" data-bs-target="#info"
+                        type="button" role="tab">Información Personal</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="ubicacion-tab" data-bs-toggle="tab" data-bs-target="#ubicacion"
+                        type="button" role="tab">Ubicación</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="servicio-tab" data-bs-toggle="tab" data-bs-target="#servicio"
+                        type="button" role="tab">Servicio</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="referencias-tab" data-bs-toggle="tab" data-bs-target="#referencias"
+                        type="button" role="tab">Referencias</button>
+                </li>
+            </ul>
+
+            <!-- Contenido de pestañas -->
+            <form id="detalleClienteForm" method="POST" class="tab-content mt-3">
+                {% csrf_token %}
+
+                <!-- Información personal -->
+                <div class="tab-pane fade show active" id="info" role="tabpanel">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Nombre</label>
+                            <input type="text" class="form-control" name="nombre" value="{{ cliente.nombre }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Género</label>
+                            <select class="form-select" name="genero">
+                                <option value="">Seleccione</option>
+                                <option value="Masculino">Masculino</option>
+                                <option value="Femenino">Femenino</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Fecha de Nacimiento</label>
+                            <input type="date" class="form-control" name="fecha_nacimiento">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Teléfono</label>
+                            <input type="text" class="form-control" name="telefono" value="{{ cliente.telefono }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Celular</label>
+                            <input type="text" class="form-control" name="celular" value="{{ cliente.celular }}">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Correo Electrónico</label>
+                            <input type="email" class="form-control" name="correo">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">NIT</label>
+                            <input type="text" class="form-control" name="nit" value="{{ cliente.nit }}" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">DUI</label>
+                            <input type="text" class="form-control" name="dui" value="{{ cliente.dui }}" readonly>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Lugar de Trabajo</label>
+                            <input type="text" class="form-control" name="lugar_trabajo">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Teléfono de Trabajo</label>
+                            <input type="text" class="form-control" name="telefono_trabajo">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Tipo de Cliente</label>
+                            <select class="form-select" name="tipo_cliente">
+                                <option value="Residencial">Residencial</option>
+                                <option value="Corporativo">Corporativo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Estado Civil</label>
+                            <select class="form-select" name="estado_civil">
+                                <option value="">Seleccione</option>
+                                <option value="Soltero">Soltero</option>
+                                <option value="Casado">Casado</option>
+                                <option value="Divorciado">Divorciado</option>
+                                <option value="Viudo">Viudo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Cargo de Trabajo</label>
+                            <input type="text" class="form-control" name="cargo_trabajo">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ubicación -->
+                <div class="tab-pane fade" id="ubicacion" role="tabpanel">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Dirección</label>
+                            <input type="text" class="form-control" name="direccion">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Colonia</label>
+                            <input type="text" class="form-control" name="colonia">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Municipio</label>
+                            <input type="text" class="form-control" name="municipio">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Servicio -->
+                <div class="tab-pane fade" id="servicio" role="tabpanel">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Ancho de bajada</label>
+                            <input type="text" class="form-control" name="ancho_bajada">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Ancho de subida</label>
+                            <input type="text" class="form-control" name="ancho_subida">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Paquete</label>
+                            <input type="text" class="form-control" name="paquete">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">OLT</label>
+                            <input type="text" class="form-control" name="olt">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Referencias -->
+                <div class="tab-pane fade" id="referencias" role="tabpanel">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Nombre Referencia</label>
+                            <input type="text" class="form-control" name="nombre_referencia">
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Teléfono Referencia</label>
+                            <input type="text" class="form-control" name="telefono_referencia">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones -->
+                <div class="mt-4 d-flex justify-content-end">
+                    <button type="submit" class="btn btn-success">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+
+ <script src="{% static 'js/detalle_cliente.js' %}"></script>
+
+{% endblock %}

@@ -1,0 +1,138 @@
+{% extends 'components/base.html' %}
+{% load static %}
+
+{% block styles %}
+<link rel="stylesheet" href="{% static 'assets/libs/jsvectormap/jsvectormap.min.css'%}">
+<link rel="stylesheet" href="{% static 'assets/libs/swiper/swiper-bundle.min.css'%}">
+
+{% endblock %}
+
+{% block content %}
+<div class="d-sm-flex d-block align-items-center justify-content-between page-header-breadcrumb">
+      <h4 class="fw-medium mb-0">Detalles tarjetas</h4>
+    <div class="page-breadcrumb">
+        <ol class="breadcrumb mb-0">
+            <li class="breadcrumb-item">
+                <a href="{% url 'app:index' %}" class="text-white text-decoration-none">Inicio</a>
+            </li>
+            <li class="breadcrumb-item text-white">OLT</li>
+            <li class="breadcrumb-item">
+            <a href="{% url 'olt:san_alejo' %}" class="text-white text-decoration-none">San alejo</a>
+            </li>
+            <li class="breadcrumb-item">
+            <a href="{% url 'olt:detalle_tarjeta' tarjeta.id %}" class="text-white text-decoration-none">Detalles</a>
+            </li>
+            <li class="breadcrumb-item">
+            <a href="{% url 'olt:onts' %}" class="text-white text-decoration-none">Onts</a>
+            </li>
+        </ol>
+    </div>
+</div>
+
+<br>
+<br>
+<br>
+<br>
+<div class="container mt-4">
+  <br>
+    <!-- Botón regresar -->
+    <div class="mt-5 mb-3">
+        <a href="{% url 'olt:detalle_tarjeta'  %}" class="bi bi-arrow-left-short btn btn-outline-secondary"> Regresar</a>
+    </div>
+
+        <!-- TABLA DE ONTs -->
+                <div class="card mb-4">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0">ONTs</h5>
+                        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#agregarOntModal">
+                            <i class="bi bi-plus-lg"></i> Agregar ONT
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>F/S/P</th>
+                                    <th>ONT ID</th>
+                                    <th>Service Port</th>
+                                    <th>Nombre</th>
+                                    <th>SN</th>
+                                    <th>Control flag</th>
+                                    <th>Run State</th>
+                                    <th>Config State</th>
+                                    <th>Match State</th>
+                                    <th>Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="ontsBody">
+                                {% for ont in onts %}
+                                <tr>
+                                    <td>{{ ont.fsp }}</td>
+                                    <td>{{ ont.ont_id }}</td>
+                                    <td>{{ ont.service_port }}</td>
+                                    <td>{{ ont.nombre }}</td>
+                                    <td>{{ ont.sn }}</td>
+                                    <td>{{ ont.control_flag }}</td>
+                                    <td>{{ ont.run_state }}</td>
+                                    <td>{{ ont.config_state }}</td>
+                                    <td>{{ ont.match_state }}</td>
+                                    <td>
+                                        <button class="btn btn-sm btn-primary">Editar</button>
+                                        <button class="btn btn-sm btn-danger">Eliminar</button>
+                                    </td>
+                                </tr>
+                                {% empty %}
+                                <tr>
+                                    <td colspan="10" class="text-center">No hay ONTs registrados.</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <!-- MODAL AGREGAR ONT -->
+                <div class="modal fade" id="agregarOntModal" tabindex="-1" aria-labelledby="agregarOntLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <form id="agregarOntForm">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="agregarOntLabel">Agregar Nueva ONT</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <!-- Selección del puerto -->
+                                    <div class="mb-3">
+                                        <label for="puerto_select" class="form-label">Puerto</label>
+                                        <select id="puerto_select" name="puerto" class="form-select" required>
+                                            {% for puerto in puertos %}
+                                                <option value="{{ puerto.id }}">{{ puerto.port }} - {{ puerto.tipo }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="nombre_ont" class="form-label">Nombre</label>
+                                        <input type="text" class="form-control" id="nombre_ont" name="nombre_ont" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="sn" class="form-label">SN</label>
+                                        <input type="text" class="form-control" id="sn" name="sn" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="control_flag" class="form-label">Control Flag</label>
+                                        <input type="text" class="form-control" id="control_flag" name="control_flag" value="active">
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                    <button type="submit" class="btn btn-success">Guardar</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                </div>
+{% endblock %}
+{% block scripts %}
+<script src="{% static 'js/onts.js' %}"></script>
+{% endblock %}
